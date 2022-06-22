@@ -44,4 +44,4 @@ __pycache__
 # Miscellaneous
 .venv
 .DS_Store
-test.ipynb
+*.ipynb
