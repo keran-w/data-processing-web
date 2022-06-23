@@ -1,33 +1,37 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% block head %}
-{% load static %}
-<link rel="stylesheet" href= "{% static "css/uploader.css" %}">
+  {% load static %}
+  <link rel="stylesheet" href="{% static "css/uploader.css" %}"/>
+  <script src="{% static "js/xlsx.full.min.js" %}"></script>
+  <script src="{% static "js/uploader.js" %}"></script>
 {% endblock head %}
-
-{% block main_body %}
-
-<div class="text-center container">
-    <h1 class="">Page Title
-      <hr>
+{% block main %}
+  <div class="text-center container">
+    <h1>
+      Page Title
+      <hr/>
     </h1>
   </div>
   <!-- ---------------------------------------- -->
-
   <section class="text-center container section-1">
     <div class="row col-lg-10 col-md mx-auto">
       <p class="lead text-muted">
-        description description description description description description description description description.1 <br>
-        description description description description description description description description description.1 
+        description description description description description description description.1
+        <br/>
+        description description description description description description description.1
       </p>
     </div>
     <div class="row">
-      <form method="post" action="#" id="#">
-        <div class="form-group files">
-          <input type="file" class="form-control" multiple="">
-        </div>
+      <form method="post" action="#" id="upload_form">
+      <div class="form-group files">
+        <input type="file" class="form-control" id="file_upload" multiple=""/>
+      </div>
       </form>
+      <table class="table" id="display_excel_data" border="1">
+      </table>
     </div>
   </section>
-
-{% endblock main_body %}
+{% endblock main %}
+{% block footer %}
+  <button class="btn btn-primary" onclick="upload()">Upload</button>
+{% endblock footer %}
