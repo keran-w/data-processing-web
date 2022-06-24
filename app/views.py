@@ -59,4 +59,7 @@ def config(request):
         data_df = pd.read_csv(FILEPATH, nrows=1)
     
     context['file_cols'] = list(data_df.columns)
+    context['items'] = ['A', 'B', 'C', 'D']
+    # context['items'] = [[f'{i}', j] for i, j in enumerate(context['items'])]
+    
     return render(request, 'config.html', context)
