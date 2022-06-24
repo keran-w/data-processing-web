@@ -57,3 +57,10 @@
     text-transform: capitalize;
     text-align: center;
 }
+
+
+.fixed-bottom {
+    margin: auto;
+    width: 70%;
+    margin-bottom: 20px;
+}
