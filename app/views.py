@@ -47,5 +47,16 @@ def index(request):
 
 def config(request):
     context = {}
-    # FILEPATH
-    return render(request, 'config.html')
+    
+    try:
+        FILEPATH
+    except:
+        return HttpResponseNotFound(404)
+    
+    try:
+        data_df = pd.read_excel(FILEPATH, nrows=1)
+    except:
+        data_df = pd.read_csv(FILEPATH, nrows=1)
+    
+    context['file_cols'] = list(data_df.columns)
+    return render(request, 'config.html', context)
