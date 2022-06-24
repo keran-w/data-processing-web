@@ -46,3 +46,6 @@ __pycache__
 .DS_Store
 *.ipynb
 run.bat
+
+media
+*.sqlite3
