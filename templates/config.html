@@ -1,35 +1,31 @@
 {% extends "base.html" %}
-
 {% block head %}
-
 {% endblock head %}
-
-{% block pagetitle %}Config{% endblock pagetitle %}
-
+{% block pagetitle %}
+    Config
+{% endblock pagetitle %}
 {% block main %}
-
-
-{% for i in file_cols %}
-
-<div class="container">
-    <label> {{ i }} </label>
-
-    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-        
-        {% for j in items %}
-        <input type="radio" class="btn-check" name="radio-btn" id="radio-btn-{{ j }}" autocomplete="off">
-        <label class="btn btn-outline-dark" for="radio-btn-{{ j }}"> {{ j }} </label>
+    <form>
+        {% for i in file_cols %}
+            <div class="container row" style="margin-top: 20px">
+                <label class="col-5 col-form-label" style="font-size: 150%;">{{ i }}</label>
+                <div class="col-7 btn-group btn-group-justified"
+                     data-toggle="buttons"
+                     role="group">
+                    {% for j in items %}
+                        <label style="width:100px;font-size: 150%;"
+                               class="btn btn-outline-dark btn-rounded btn-md form-check-label">
+                            <input class="form-check-input btn-check btn-default"
+                                   type="radio"
+                                   autocomplete="off"
+                                   name="radio-btn-{{ i }}"/>
+                            {{ j }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
         {% endfor %}
-
-    </div>
-</div>
-
-{% endfor %}
-
-
-
+    </form>
 {% endblock main %}
-
 {% block footer %}
-
 {% endblock footer %}
