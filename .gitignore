@@ -48,3 +48,4 @@ __pycache__
 run.bat
 
 *.sqlite3
+test.html
