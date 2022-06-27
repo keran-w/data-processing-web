@@ -47,5 +47,4 @@ __pycache__
 *.ipynb
 run.bat
 
-media
 *.sqlite3
