@@ -1,5 +1,6 @@
-from django import forms
 import numpy as np
+from django import forms
+
 from . import settings
 from .core.variable_type_checking import var_type
 

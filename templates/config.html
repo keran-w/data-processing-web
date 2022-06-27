@@ -10,25 +10,6 @@
 {% endblock pagetitle %}
 {% block main %}
     <form method="post">
-        <!-- {% for i in file_cols %}
-            <div class="container row" style="margin-top: 20px">
-                <label class="col-5 col-form-label" style="font-size: 150%;">{{ i }}</label>
-                <div class="col-7 btn-group btn-group-justified"
-                     data-toggle="buttons"
-                     role="group">
-                    {% for j in items %}
-                        <label style="width:100px;font-size: 150%;"
-                               class="btn btn-outline-dark btn-rounded btn-md form-check-label">
-                            <input class="form-check-input btn-check btn-default"
-                                   type="radio"
-                                   autocomplete="off"
-                                   name="radio-btn-{{ i }}"/>
-                            {{ j }}
-                        </label>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endfor %} -->
         {% csrf_token %}
         {{ form|crispy }}
         <div class="py-5"></div>
