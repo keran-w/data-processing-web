@@ -3,14 +3,16 @@ import pandas as pd
 from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-from .forms import UploadFileForm
+from .forms import ConfigForm
 from .storage import OverwriteStorage
 from .settings import MEDIA_ROOT
+from .core.process import DataProcesser
 import os
 from django.http import HttpResponseNotFound
 
 NAN = -999.99999999
-global FILEPATH 
+global FILEPATH
+
 
 def index(request):
 
@@ -21,7 +23,7 @@ def index(request):
     if request.method == 'POST' and request.FILES['file_data'] and 'show' in request.POST:
         data = request.FILES['file_data']
         file_path = os.path.join(MEDIA_ROOT, data.name)
-        global FILEPATH 
+        global FILEPATH
         FILEPATH = file_path
         if os.path.exists(file_path):
             os.remove(os.path.join(MEDIA_ROOT, data.name))
@@ -46,20 +48,29 @@ def index(request):
 
 
 def config(request):
-    context = {}
-    
+
     try:
         FILEPATH
     except:
         return HttpResponseNotFound(404)
-    
+
     try:
-        data_df = pd.read_excel(FILEPATH, nrows=1)
+        data_df = pd.read_excel(FILEPATH)
     except:
-        data_df = pd.read_csv(FILEPATH, nrows=1)
+        data_df = pd.read_csv(FILEPATH)
+
+    form_config = dict(
+        variables=list(data_df.columns),
+        data_df=data_df
+    )
     
-    context['file_cols'] = list(data_df.columns)
-    context['items'] = ['AAAA', 'BBBBBB', 'C', 'DDD']
-    # context['items'] = [[f'{i}', j] for i, j in enumerate(context['items'])]
-    
-    return render(request, 'config.html', context)
+    if request.method == 'POST':
+        form = ConfigForm(request.POST, **form_config)
+        if form.is_valid():
+            form_data = form.cleaned_data
+            print(form_data)
+            return HttpResponseNotFound(404)
+    else:
+        form = ConfigForm(**form_config)
+
+    return render(request, 'config.html', {'form': form})

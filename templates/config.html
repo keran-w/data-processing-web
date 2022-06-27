@@ -1,12 +1,16 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
+
 {% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/config.css' %}" />
 {% endblock head %}
 {% block pagetitle %}
     Config
 {% endblock pagetitle %}
 {% block main %}
-    <form>
-        {% for i in file_cols %}
+    <form method="post">
+        <!-- {% for i in file_cols %}
             <div class="container row" style="margin-top: 20px">
                 <label class="col-5 col-form-label" style="font-size: 150%;">{{ i }}</label>
                 <div class="col-7 btn-group btn-group-justified"
@@ -24,7 +28,15 @@
                     {% endfor %}
                 </div>
             </div>
-        {% endfor %}
+        {% endfor %} -->
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="py-5"></div>
+
+        <div class="btn-group d-flex fixed-bottom"" role=" group">
+            <a class="btn btn-light" href="/"> Restart</a>
+            <button class="btn btn-light" type="submit" name="show">Continue</button>
+          </div>
     </form>
 {% endblock main %}
 {% block footer %}

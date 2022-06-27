@@ -37,7 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap5'
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -125,3 +131,71 @@ STATICFILES_DIRS = (
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# radio selections for variable types
+VAR_TYPES = 'Variable Types', {
+    'delete': '删除',
+    'binary': '二值变量',
+    'quan': '多值有序',
+    'mult_order': '多值无序',
+    'mult_disorder': '连续变量',
+}
+
+# checkbox selections for methods
+SAMPLING_METHODS = 'Sampling Methods', {
+    'SMO': 'SMO',
+    'SSMO': 'SSMO',
+    'BSMO': 'BSMO',
+    'ADA': 'ADA',
+    'ROS': 'ROS',
+    'SMN': 'SMN',
+}
+
+IMPUTE_METHODS = 'Impute Methods', {
+    'Simple': 'Simple',
+    'KNN': 'KNN',
+    'ISVD': 'ISVD',
+    'Imput': 'Imput',
+    'rf': 'rf',
+    'optimal': 'optimal',
+}
+
+SELE_METHODS = 'Selection Methods', {
+    'Las': 'Las',
+    'RCV': 'RCV',
+    'ENC': 'ENC',
+    'Cat': 'Cat',
+    'SVC': 'SVC',
+    'RF': 'RF',
+    'Ada': 'Ada',
+    'GBC': 'GBC',
+    'ExT': 'ExT',
+    'BNB': 'BNB',
+    'XGB': 'XGB',
+    'LGBM': 'LGBM',
+}
+
+TRAIN_METHODS = 'Train Methods', {
+    'Multinomial Naive Bayes': 'Multinomial Naive Bayes',
+    'Random Forest': 'Random Forest',
+    'AdaBoost': 'AdaBoost',
+    'Gradient Boosting': 'Gradient Boosting',
+    'Bernoulli Naive Bayes': 'Bernoulli Naive Bayes',
+    'XGBoost': 'XGBoost',
+    'LGBoost': 'LGBoost',
+    'Gaussian Naive Bayes': 'Gaussian Naive Bayes',
+    'Complement Naive Bayes': 'Complement Naive Bayes',
+    'KNN': 'KNN',
+    'CatBoost': 'CatBoost',
+    'Decision Tree': 'Decision Tree',
+    'QDA': 'QDA',
+    'Extra Tree': 'Extra Tree',
+    'SVC': 'SVC',
+    'Passive Aggressive': 'Passive Aggressive',
+    'LDA': 'LDA',
+    'Logistic Regression': 'Logistic Regression',
+    'SGD': 'SGD',
+    'Bagging': 'Bagging',
+    'MLP': 'MLP',
+}
