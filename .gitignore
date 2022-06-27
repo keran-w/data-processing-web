@@ -45,7 +45,7 @@ __pycache__
 .venv
 .DS_Store
 *.ipynb
+test.html
 run.bat
 
 *.sqlite3
-test.html
