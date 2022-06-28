@@ -22,6 +22,7 @@ def index(request):
 
     if request.method == 'POST' and request.FILES['file_data'] and 'show' in request.POST:
         data = request.FILES['file_data']
+        os.makedirs(MEDIA_ROOT, exist_ok=True)
         file_path = os.path.join(MEDIA_ROOT, data.name)
         global FILEPATH
         FILEPATH = file_path
