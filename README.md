@@ -4,7 +4,7 @@
 
 python -m venv .venv
 
-conda create -n env-01 python=3.9
+conda create -n env-data-proc-web python=3.9
 
 pip install -r requirements.txt
 
