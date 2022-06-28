@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 from fancyimpute import KNN, IterativeSVD, IterativeImputer
-from utils.data_fill import fill_simpleImputing
-from utils.data_fill import fill_Randomforest
-from utils.data_fill import fill_optimalDel
+from . import fill_simpleImputing
+from . import fill_Randomforest
+from . import fill_optimalDel
 
 
 def data_impute(df, impute_method, var_type_dict):  # 数据填充

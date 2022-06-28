@@ -1,6 +1,10 @@
 from sklearn import preprocessing
 
 
+def get_hyperparams():
+
+    return model_hp_dict
+
 def get_dataset(path1, path2, isMaxMin=True):
     """输入训练集和测试集"""
     df_train = path1

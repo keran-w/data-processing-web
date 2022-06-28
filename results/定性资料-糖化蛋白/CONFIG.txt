@@ -1,0 +1,42 @@
+{
+    "data_path": "media/定性资料-糖化蛋白.xlsx",
+    "tgt_col": "diastatic",
+    "imp_method": [
+        "Simple",
+        "KNN",
+        "ISVD"
+    ],
+    "sampling_method": [
+        "SMO",
+        "SSMO",
+        "BSMO"
+    ],
+    "sele_method": [
+        "Las",
+        "RCV",
+        "ENC"
+    ],
+    "model_name": [
+        "Multinomial Naive Bayes",
+        "Random Forest",
+        "AdaBoost"
+    ],
+    "out_file": "metrics.json",
+    "not_analyze": true,
+    "var_type_dict": {
+        "binary": [
+            "diastatic",
+            "Gender"
+        ],
+        "quan": [
+            "Age",
+            "Height"
+        ],
+        "mult_order": [
+            "Nationality",
+            "Education"
+        ],
+        "mult_disorder": []
+    },
+    "seed": 20
+}

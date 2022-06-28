@@ -21,11 +21,19 @@
 
 <body>
     <header>
-        <nav class="navbar fixed-top navbar-light bg-light">
+        <!-- <nav class="navbar fixed-top navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand position-static" href="#">Navbar</a>
             </div>
-        </nav>
+        </nav> -->
+        <nav class="navbar fixed-top navbar-light bg-light">
+            <div class="container-fluid">
+              <a class="navbar-brand position-static">
+                {% load static %}
+                <img src="{% static 'img/logo.png' %}" alt="">
+              </a>
+            </div>
+          </nav>
     </header>
     <main>
         <div class="py-5"></div>

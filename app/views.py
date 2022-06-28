@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from django.conf import settings
 from django.shortcuts import render
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponse
 from django.core.files.storage import FileSystemStorage
 
 from .forms import ConfigForm
@@ -69,7 +69,7 @@ def config(request):
         if form.is_valid():
             form_data = form.cleaned_data
             print(form_data)
-            return HttpResponseNotFound(404)
+            return HttpResponse(FILEPATH + '<br>' + str(form_data) + '<br>' + str(form_config))
     else:
         form = ConfigForm(**form_config)
 
