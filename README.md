@@ -6,7 +6,7 @@ python -m venv .venv
 
 conda create -n env-data-proc-web python=3.9
 
-conda activate env-data-proc-web
+.venv/Scripts/Activate.ps1
 
 pip install -r requirements.txt
 
