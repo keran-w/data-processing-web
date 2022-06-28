@@ -8,14 +8,6 @@ python -m venv .venv
 
 pip install -r requirements.txt
 
-### Using pip
-
-pip install -r requirements.txt --user
-
-### Setup
-
 python manage.py migrate
 
-### Run
-
-python manage.py runserver 8080
+python manage.py runserver 8000
