@@ -4,7 +4,6 @@ from django import forms
 from . import settings
 from .core.variable_type_checking import var_type
 
-
 VAR_TYPES_LABEL, VAR_TYPES_CHOICES = settings.VAR_TYPES
 PRE_SELECT = 3
 

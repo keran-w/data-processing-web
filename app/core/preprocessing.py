@@ -133,13 +133,18 @@ def feature_selection(data, SEED, SELE_METHODS, sele_method_=None):
 
 
 def process_data(CFG, RESULT_PATH):
-    data = CFG.data
-    tgt_col = CFG.tgt_col
-    imp_method_ = CFG.imp_method
-    sampling_method_ = CFG.sampling_method
-    sele_method_ = CFG.sele_method
-    var_type_dict = CFG.var_type_dict
-    SEED = CFG.seed
+    data = CFG['data']
+    tgt_col = CFG['tgt_col']
+    imp_method_ = CFG['imp_method']
+    sampling_method_ = CFG['sampling_method']
+    sele_method_ = CFG['sele_method']
+    variables =  CFG['variables']
+    var_types = CFG['var_types']
+    var_type_dict = {k:[] for k in ['binary', 'quan', 'mult_order', 'mult_disorder']}
+    for k, v in zip(variables, var_types):
+        var_type_dict[v].append(k)
+    
+    SEED = CFG['seed']
 
     data = data[[tgt_col] + [col for col in data.columns if col != tgt_col]]
 

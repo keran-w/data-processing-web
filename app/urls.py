@@ -20,5 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
     path('index/', views.index),
-    path('config/', views.config),
+    path('<str:data_name>', views.index),
+    path('<str:data_name>/config/', views.config),
+    path('<str:data_name>/preprocess/', views.preprocess),
 ]
