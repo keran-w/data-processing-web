@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import json
 from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponseNotFound, HttpResponse, HttpResponseRedirect
@@ -13,6 +14,7 @@ from .settings import MEDIA_ROOT
 from .models import Config
 
 from .core.process import preprocess_runner, analysis_runner, model_runner
+from .core.analysis import analyze, get_plots, NpEncoder
 
 
 NAN = -999.99999999
@@ -140,9 +142,35 @@ def preprocess(request, data_name=None):
 
 def process(request, data_name=None):
     CFG = get_config(data_name)
-    CFG['RESULT_PATH'] = f'results/{data_name}/'
-    metrics_dict = model_runner(CFG)
+    RESULT_PATH = f'results/{data_name}/'
+    results_path = RESULT_PATH + 'analysis/results_metrics.csv'
+    try:
+        results = pd.read_csv(results_path).round(2)
+    except:
+        CFG['RESULT_PATH'] = RESULT_PATH
+        metrics_dict = model_runner(CFG)
+        import json
+        json.dump(metrics_dict, open(
+            RESULT_PATH + f'analysis/metrics_dict.json', 'w', encoding='utf-8'), indent=4, cls=NpEncoder)
+        results_path = analyze(metrics_dict, RESULT_PATH)
+        results = pd.read_csv(results_path).round(2)
 
     return render(request, 'process.html', {
-        'data_name': data_name
+        'data_name': data_name,
+        'file_cols': list(results.columns),
+        'file_data': results.values.tolist()
     })
+
+
+def plots(request, data_name=None):
+    CFG = get_config(data_name)
+    RESULT_PATH = f'results/{data_name}/'
+    results_path = RESULT_PATH + 'analysis/results_metrics.csv'
+    results_metrics_df = pd.read_csv(results_path)
+    metrics_dict = json.load(
+        open(RESULT_PATH + f'analysis/metrics_dict.json', 'r'))
+    plot_path = get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH)
+    
+    print([f'{plot_path}/{file}' for file in os.listdir(plot_path)])
+    
+    return HttpResponse(405)

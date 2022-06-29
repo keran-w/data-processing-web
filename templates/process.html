@@ -6,13 +6,42 @@
 
 <!-- ------------------------------------------------------------------------- -->
 
-{% block pagetitle %} Process  {% endblock pagetitle %}
+{% block pagetitle %} Process Results {% endblock pagetitle %}
 
 <!-- ------------------------------------------------------------------------- -->
 <!-- ------------------------------------------------------------------------- -->
 <!-- ------------------------------------------------------------------------- -->
 
 {% block main %}
+
+
+<div class="text-center container" style="width: 100%; height: 650px;overflow: auto;">
+    <table class="table table-striped table-fixed">
+        <thead>
+            <tr>
+                {% for i in file_cols %}
+                <th> {{i}} </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in file_data %}
+            <tr>
+                {% for j in i %}
+                <td>{{j}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class='row mb-5'></div>
+
+<div class="btn-group d-flex fixed-bottom" role="group">
+    <a class="btn btn-light" href="/"> Restart</a>
+    <a class="btn btn-light" href="/{{ data_name }}/plots">Continue</a>
+</div>
 
 {% endblock main %}
 

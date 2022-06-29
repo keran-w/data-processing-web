@@ -34,7 +34,7 @@ def auto_training(train_data, test_data, SEED, model_name_=None, key='', HP_PATH
         results = list(auto_model(
             args, model_hp_dict[model_name], num_classes, model_name, SEED, key).values())
         metrics_dict[model_name] = results
-            
+
     return metrics_dict
 
 
@@ -48,10 +48,7 @@ def preprocess_runner(CFG):
     except:
         data = pd.read_csv(f'{settings.MEDIA_ROOT}/{data_name}.csv')
 
-    try:
-        shutil.rmtree(RESULT_PATH)
-    except:
-        ...
+    shutil.rmtree(RESULT_PATH)
 
     os.makedirs(RESULT_PATH, exist_ok=True)
     os.makedirs(RESULT_PATH + 'tmp', exist_ok=True)
@@ -82,6 +79,8 @@ def analysis_runner(CFG, var_type_dict, RESULT_PATH):
     for key in var_type_dict:
         var_type_dict[key] = [
             item for item in var_type_dict[key] if item != CFG['tgt_col']]
+    json.dump(var_type_dict, open(RESULT_PATH + 'logging/var_type_dict.json',
+                                  'w', encoding='utf-8'), indent=4)
     res = var_ty(CFG['data'], yvar_type, var_type_dict, RESULT_PATH)
     data = CFG['data']
 
@@ -208,14 +207,13 @@ def analysis_runner(CFG, var_type_dict, RESULT_PATH):
 def model_runner(CFG):
     import pandas as pd
     RESULT_PATH = CFG['RESULT_PATH']
-    all_keys = os.listdir(RESULT_PATH + 'data')
+    all_keys = set([key.rsplit('_', 1)[0]
+                   for key in os.listdir(RESULT_PATH + 'data')])
     metrics_dict = {}
     for key in all_keys:
-        
-        key = key.rsplit('_', 1)[0]
         train_data = pd.read_csv(f'{RESULT_PATH}data/{key}_train.csv')
         test_data = pd.read_csv(f'{RESULT_PATH}data/{key}_test.csv')
         metrics_dict[key] = auto_training(train_data, test_data, CFG['seed'],
-                                    model_name_=CFG['model_name'], key=key,
-                                    HP_PATH='model_hp.yaml')
+                                          model_name_=CFG['model_name'], key=key,
+                                          HP_PATH='model_hp.yaml')
     return metrics_dict
