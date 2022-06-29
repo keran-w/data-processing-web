@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from utils.univariate_analysis import qualitaive_analysis
-from utils.univariate_analysis.tool import format_float
+from . import qualitaive_analysis
+from .tool import format_float
 
 
 # filepath = 'test.xlsx'#因变量为二值/多值，自变量为连续变量

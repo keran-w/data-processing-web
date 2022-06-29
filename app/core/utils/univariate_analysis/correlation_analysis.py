@@ -1,7 +1,7 @@
 from scipy import stats
 import pandas as pd
 import numpy as np
-from utils.univariate_analysis.tool import format_float
+from .tool import format_float
 
 
 def correlation_analysis(filepath):  # 相关性分析

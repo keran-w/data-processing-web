@@ -13,3 +13,4 @@ xgboost==1.6.1
 fancyimpute==0.7.0
 imblearn==0.0
 statsmodels==0.13.2
+lxml==4.9.0

@@ -2,7 +2,7 @@ from scipy import stats
 import pandas as pd
 import numpy as np
 import scipy as sp
-from utils.univariate_analysis.tool import format_float
+from .tool import format_float
 
 
 def two_disorderly(filepath):  # 双向无序

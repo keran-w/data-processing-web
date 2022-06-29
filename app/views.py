@@ -12,7 +12,8 @@ from .settings import MEDIA_ROOT
 
 from .models import Config
 
-from .core.process import runner
+from .core.process import preprocess_runner, analysis_runner
+
 
 NAN = -999.99999999
 
@@ -111,6 +112,10 @@ def preprocess(request, data_name=None):
     
     CFG['seed'] = 20
     
-    RESULT_PATH, all_keys = runner(CFG)
+    CFG, RESULT_PATH, var_type_dict = preprocess_runner(CFG)
+    print(CFG)
+    print(RESULT_PATH)
+    print(var_type_dict)
+    analysis_runner(CFG, var_type_dict, RESULT_PATH)
     
     return render(request, 'preprocess.html')

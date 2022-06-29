@@ -191,4 +191,4 @@ def process_data(CFG, RESULT_PATH):
                     RESULT_PATH + f'data/{key}_train.csv', encoding='utf-8-sig', index=False)
                 data_test_sele.to_csv(
                     RESULT_PATH + f'data/{key}_test.csv', encoding='utf-8-sig', index=False)
-    return all_keys
+    return var_type_dict

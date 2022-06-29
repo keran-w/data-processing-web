@@ -1,5 +1,5 @@
 from scipy import stats
-from utils.univariate_analysis.tool import format_float
+from .tool import format_float
 
 
 def judge_normal(data: list):  # 判断正态分布
