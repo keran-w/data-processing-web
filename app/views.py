@@ -12,10 +12,22 @@ from .settings import MEDIA_ROOT
 
 from .models import Config
 
-from .core.process import preprocess_runner, analysis_runner
+from .core.process import preprocess_runner, analysis_runner, model_runner
 
 
 NAN = -999.99999999
+
+
+def get_config(data_name, seed=20):
+    CFG = list(Config.objects.all().filter(data_name=data_name))[-1].__dict__
+    CFG['variables'] = CFG['variables'].split('||')
+    CFG['var_types'] = CFG['var_types'].split('|')
+    CFG['imp_method'] = CFG['imp_method'].split('|')
+    CFG['sampling_method'] = CFG['sampling_method'].split('|')
+    CFG['sele_method'] = CFG['sele_method'].split('|')
+    CFG['model_name'] = CFG['model_name'].split('|')
+    CFG['seed'] = seed
+    return CFG
 
 
 def index(request, data_name=None):
@@ -102,20 +114,35 @@ def config(request, data_name=None):
 
 def preprocess(request, data_name=None):
 
-    CFG = list(Config.objects.all().filter(data_name=data_name))[-1].__dict__
-    CFG['variables'] = CFG['variables'].split('||')
-    CFG['var_types'] = CFG['var_types'].split('|')
-    CFG['imp_method'] = CFG['imp_method'].split('|')
-    CFG['sampling_method'] = CFG['sampling_method'].split('|')
-    CFG['sele_method'] = CFG['sele_method'].split('|')
-    CFG['model_name'] = CFG['model_name'].split('|')
-    
-    CFG['seed'] = 20
-    
+    CFG = get_config(data_name)
     CFG, RESULT_PATH, var_type_dict = preprocess_runner(CFG)
     print(CFG)
     print(RESULT_PATH)
     print(var_type_dict)
-    analysis_runner(CFG, var_type_dict, RESULT_PATH)
-    
-    return render(request, 'preprocess.html')
+    result_path = analysis_runner(CFG, var_type_dict, RESULT_PATH)
+
+    datum = pd.ExcelFile(result_path)
+    sheet_names = datum.sheet_names
+    data_cols = []
+    data_values = []
+    for sn in sheet_names:
+        data = pd.read_excel(datum, sn).fillna('')
+        data_cols.append(
+            [col if col[:7] != 'Unnamed' else '' for col in data.columns])
+        data_values.append(data.values.tolist())
+
+    return render(request, 'preprocess.html', {
+        'sheet_ids': list(range(len(sheet_names))),
+        'sheet_data': list(zip(sheet_names, data_cols, data_values)),
+        'data_name': data_name
+    })
+
+
+def process(request, data_name=None):
+    CFG = get_config(data_name)
+    CFG['RESULT_PATH'] = f'results/{data_name}/'
+    metrics_dict = model_runner(CFG)
+
+    return render(request, 'process.html', {
+        'data_name': data_name
+    })

@@ -5,7 +5,7 @@ from . import settings
 from .core.variable_type_checking import var_type
 
 VAR_TYPES_LABEL, VAR_TYPES_CHOICES = settings.VAR_TYPES
-PRE_SELECT = 3
+PRE_SELECT = 2
 
 CHECKBOXS = [
     settings.IMPUTE_METHODS,
@@ -23,7 +23,7 @@ class ConfigForm(forms.Form):
         super(ConfigForm, self).__init__(*args, **kwargs)
         self.fields['Target Column'] = forms.CharField(
             widget=forms.TextInput(attrs={
-                'required': True, 
+                'required': True,
             }),
         )
         self.initial['Target Column'] = variables[0]

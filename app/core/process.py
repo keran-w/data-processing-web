@@ -30,14 +30,11 @@ def auto_training(train_data, test_data, SEED, model_name_=None, key='', HP_PATH
     for model_name in TRAIN_METHODS:
         if model_name_ is not None and model_name not in model_name_:
             continue
-        try:
-            results = list(auto_model(
-                args, model_hp_dict[model_name], num_classes, model_name, SEED, key).values())
-            metrics_dict[model_name] = results
-        except Exception as e:
-            print(f'ERROR: {e}\n')
-            metrics_dict[model_name] = None
 
+        results = list(auto_model(
+            args, model_hp_dict[model_name], num_classes, model_name, SEED, key).values())
+        metrics_dict[model_name] = results
+            
     return metrics_dict
 
 
@@ -73,7 +70,7 @@ def analysis_runner(CFG, var_type_dict, RESULT_PATH):
 
     import pandas as pd
     from scipy import stats
-    
+
     from statsmodels.genmod.families import Binomial
 
     from .utils.univariate_analysis.univariate_quantitative import univariate_quantitative_methods, univariate_quantitative_methods1
@@ -204,3 +201,21 @@ def analysis_runner(CFG, var_type_dict, RESULT_PATH):
 
             df.to_excel(writer, encoding='utf-8',
                         index=True, sheet_name=sheet_name)
+
+    return RESULT_PATH + 'analysis/results.xlsx'
+
+
+def model_runner(CFG):
+    import pandas as pd
+    RESULT_PATH = CFG['RESULT_PATH']
+    all_keys = os.listdir(RESULT_PATH + 'data')
+    metrics_dict = {}
+    for key in all_keys:
+        
+        key = key.rsplit('_', 1)[0]
+        train_data = pd.read_csv(f'{RESULT_PATH}data/{key}_train.csv')
+        test_data = pd.read_csv(f'{RESULT_PATH}data/{key}_test.csv')
+        metrics_dict[key] = auto_training(train_data, test_data, CFG['seed'],
+                                    model_name_=CFG['model_name'], key=key,
+                                    HP_PATH='model_hp.yaml')
+    return metrics_dict

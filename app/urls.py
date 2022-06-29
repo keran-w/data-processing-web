@@ -23,4 +23,5 @@ urlpatterns = [
     path('<str:data_name>', views.index),
     path('<str:data_name>/config/', views.config),
     path('<str:data_name>/preprocess/', views.preprocess),
+    path('<str:data_name>/process/', views.process),
 ]

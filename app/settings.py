@@ -179,10 +179,10 @@ SELE_METHODS = 'Selection Methods', {
 }
 
 TRAIN_METHODS = 'Train Methods', {
-    'Multinomial Naive Bayes': 'Multinomial Naive Bayes',
     'Random Forest': 'Random Forest',
     'AdaBoost': 'AdaBoost',
     'Gradient Boosting': 'Gradient Boosting',
+    'Multinomial Naive Bayes': 'Multinomial Naive Bayes',
     'Bernoulli Naive Bayes': 'Bernoulli Naive Bayes',
     'XGBoost': 'XGBoost',
     'LGBoost': 'LGBoost',
