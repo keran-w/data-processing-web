@@ -171,6 +171,9 @@ def plots(request, data_name=None):
         open(RESULT_PATH + f'analysis/metrics_dict.json', 'r'))
     plot_path = get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH)
     
-    print([f'{plot_path}/{file}' for file in os.listdir(plot_path)])
+    img_paths = [f'{plot_path}/{file}' for file in os.listdir(plot_path)]
     
-    return HttpResponse(405)
+    return render(request, 'plots.html', {
+        'data_name': data_name,
+        'img_paths': img_paths
+    })
