@@ -66,9 +66,10 @@ def index(request, data_name=None):
 
         data_df = data_df.fillna(NAN).round(3)
         data_df = data_df.replace(NAN, '')
+        os.makedirs(f'results/{data_name}', exist_ok=True)
         context['data_name'] = data_name
         context['file_name'] = file_name
-        context['file_cols'] = list(data_df.columns)
+        context['file_cols'] = [col if col[:7] != 'Unnamed' else '' for col in data_df.columns]
         context['file_data'] = data_df.values.tolist()
         context['display_table'] = True
         return render(request, 'index.html', context)

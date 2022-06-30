@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +41,7 @@ INSTALLED_APPS = [
     'django.db.backends.sqlite3',
     'crispy_forms',
     'crispy_bootstrap5',
-    'app'
+    'widget_tweaks',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

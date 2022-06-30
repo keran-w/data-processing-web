@@ -28,13 +28,16 @@ class ConfigForm(forms.Form):
         )
         self.initial['Target Column'] = variables[0]
         for i, variable in enumerate(variables):
-            col = np.sort(data_df[variable].unique())
+            try:
+                col = np.sort(data_df[variable].unique())
+            except:
+                col = data_df[variable].unique()
             print(variable, col)
             self.fields[f'var-{variable}'] = forms.ChoiceField(
                 widget=forms.RadioSelect(attrs={
                     'required': 'true'
                 }),
-                label=f'{variable} {np.unique(col[:3])}',
+                label=f'{variable} {col[:3]}',
                 choices=list(VAR_TYPES_CHOICES.items()),
                 required=True,
             )

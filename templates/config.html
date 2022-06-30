@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
 
 {% block head %}
 {% load static %}
@@ -9,7 +10,7 @@
     Config
 {% endblock pagetitle %}
 {% block main %}
-    <form method="post">
+    <form method="post" class="config-form">
         {% csrf_token %}
         {{ form|crispy }}
         <div class="py-5"></div>
