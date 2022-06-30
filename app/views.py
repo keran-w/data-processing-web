@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import json
+import shutil
 from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponseNotFound, HttpResponse, HttpResponseRedirect
@@ -169,11 +170,20 @@ def plots(request, data_name=None):
     results_metrics_df = pd.read_csv(results_path)
     metrics_dict = json.load(
         open(RESULT_PATH + f'analysis/metrics_dict.json', 'r'))
-    plot_path = get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH)
+    plot_path = get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH)    
+    # img_paths = [f'.{plot_path}/{file}' for file in os.listdir(plot_path)]
+    files = os.listdir(plot_path)
+    img_paths = [f'{plot_path}/{file}' for file in files]
     
-    img_paths = [f'{plot_path}/{file}' for file in os.listdir(plot_path)]
+    for img_path, file in zip(img_paths, files):
+        shutil.copy(img_path, os.path.join(MEDIA_ROOT, f'{data_name}_{file}'))
     
+    img_paths = [f'/media/{data_name}_{file}' for file in files]
     return render(request, 'plots.html', {
         'data_name': data_name,
         'img_paths': img_paths
     })
+    
+
+# results/定性资料-糖化蛋白/plots/roc_curves.png
+# /results/定性资料-糖化蛋白/plots/pr_curves.png

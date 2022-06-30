@@ -135,6 +135,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
+
 # radio selections for variable types
 VAR_TYPES = 'Variable Types', {
     'delete': '删除',

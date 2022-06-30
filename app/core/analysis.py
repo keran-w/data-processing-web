@@ -23,6 +23,7 @@ from ..settings import MEDIA_ROOT
 
 SAVE_FORMAT = '.png'
 
+
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
@@ -221,50 +222,51 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
                  label=f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw=3, alpha=0.8)
     plt.legend()
     plt.title('ROC Curves')
-    plt.savefig(RESULT_PATH + f'plots/roc_curves{SAVE_FORMAT}')
+    plt.savefig(RESULT_PATH + f'plots/roc_curves{SAVE_FORMAT}', bbox_inches='tight')
     plt.clf()
 
     # plot pr curves
-    plt.figure(figsize=(16, 16))
-    colors = ['darkorange', 'navy', 'aqua', 'red']
-    linestyles = ['--', '-', ':', '--']
+    plt.figure(figsize = (16, 16))
+    colors=['darkorange', 'navy', 'aqua', 'red']
+    linestyles=['--', '-', ':', '--']
 
     for i, plot_model_name in enumerate(plot_model_names):
-        method_params = results_metrics_df.query(
+        method_params=results_metrics_df.query(
             '`Model Name` == @plot_model_name').head(1).values.squeeze()
-        best_key, best_mn = '_'.join(method_params[:3]), method_params[3]
+        best_key, best_mn='_'.join(method_params[:3]), method_params[3]
 
-        auc, y_true, y_pred, y_score, params = metrics_dict[best_key][best_mn]
+        auc, y_true, y_pred, y_score, params=metrics_dict[best_key][best_mn]
         # # plot PR curve
-        r_p = np.c_[metrics.precision_recall_curve(y_true, y_score)[:2]].T
-        plt.plot(r_p[0], r_p[1], linestyles[i], color=colors[i],
-                 label=f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw=3, alpha=0.8)
+        r_p=np.c_[metrics.precision_recall_curve(y_true, y_score)[:2]].T
+        plt.plot(r_p[0], r_p[1], linestyles[i], color = colors[i],
+                 label = f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw = 3, alpha = 0.8)
 
     plt.legend()
     plt.title('PR Curves')
-    plt.savefig(RESULT_PATH + f'plots/pr_curves{SAVE_FORMAT}')
+    plt.savefig(RESULT_PATH + f'plots/pr_curves{SAVE_FORMAT}', bbox_inches = 'tight')
     plt.clf()
 
     # plot calibration curve
     plt.figure(figsize=(16, 16))
-    colors = ['darkorange', 'navy', 'aqua', 'red']
-    linestyles = ['--', '-', ':', '--']
+    colors=['darkorange', 'navy', 'aqua', 'red']
+    linestyles=['--', '-', ':', '--']
 
     for i, plot_model_name in enumerate(plot_model_names):
-        method_params = results_metrics_df.query(
+        method_params=results_metrics_df.query(
             '`Model Name` == @plot_model_name').head(1).values.squeeze()
         # print(method_params)
-        best_key, best_mn = '_'.join(method_params[:3]), method_params[3]
+        best_key, best_mn='_'.join(method_params[:3]), method_params[3]
 
-        auc, y_true, y_pred, y_score, params = metrics_dict[best_key][best_mn]
+        auc, y_true, y_pred, y_score, params=metrics_dict[best_key][best_mn]
 
         # plot roc curve
-        fpr_tpr = np.c_[metrics.roc_curve(y_true, y_score)[:2]].T
+        fpr_tpr=np.c_[metrics.roc_curve(y_true, y_score)[:2]].T
         plt.plot(fpr_tpr[0], fpr_tpr[1], linestyles[i], color=colors[i],
                  label=f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw=3, alpha=0.8)
     plt.legend()
     plt.title('Calibration Curves')
-    plt.savefig(RESULT_PATH + f'plots/calibration_curve{SAVE_FORMAT}')
+    plt.savefig(
+        RESULT_PATH + f'plots/calibration_curve{SAVE_FORMAT}', bbox_inches='tight')
     plt.clf()
 
     # file_path = os.path.join(MEDIA_ROOT, CFG['data_name'])
@@ -273,16 +275,16 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
     # except:
     #     data = pd.read_csv(file_path + '.csv', nrows=30)
 
-    tgt_col = CFG['tgt_col']
+    tgt_col=CFG['tgt_col']
 
-    fi, sa, se, mn = best_model_info.values.squeeze()[:4]
-    key = f'{fi}_{sa}_{se}'
-    train_data = pd.read_csv(f'{RESULT_PATH}data/{key}_train.csv')
-    test_data = pd.read_csv(f'{RESULT_PATH}data/{key}_test.csv')
+    fi, sa, se, mn=best_model_info.values.squeeze()[:4]
+    key=f'{fi}_{sa}_{se}'
+    train_data=pd.read_csv(f'{RESULT_PATH}data/{key}_train.csv')
+    test_data=pd.read_csv(f'{RESULT_PATH}data/{key}_test.csv')
 
-    var_type_dict = json.load(
+    var_type_dict=json.load(
         open(RESULT_PATH + f'logging/var_type_dict.json', 'r'))
-    columns = [k for key in var_type_dict if key in ['mult_order',
+    columns=[k for key in var_type_dict if key in ['mult_order',
                                                      'binary', 'quan', 'mult_disorder'] for k in var_type_dict[key]]
     print(train_data.columns)
     # data = data_filling(data, var_type_dict, fi)[fi]
@@ -340,7 +342,7 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
 
     try:
         shap.summary_plot(shap_values, test_X, plot_type='bar', show=False)
-        plt.gcf().savefig(RESULT_PATH + f'plots/{key}_summary_plot{SAVE_FORMAT}')
+        plt.gcf().savefig(RESULT_PATH + f'plots/{key}_summary_plot{SAVE_FORMAT}', bbox_inches='tight')
         print('Plotting Summary Plot')
         plt.clf()
     except Exception as e:
@@ -349,14 +351,14 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
     try:
         try:
             shap_values.values
-            tmp = shap.Explanation(shap_values, data=test_X,
-                                   feature_names=test_X.columns)
+            tmp=shap.Explanation(shap_values, data = test_X,
+                                   feature_names = test_X.columns)
         except:
-            tmp = shap.Explanation(
-                shap_values[:, :, 1], data=test_X, feature_names=test_X.columns)
-        shap.plots.beeswarm(tmp, show=False, color_bar=True,
-                            plot_size=(12, 9), max_display=10000)
-        plt.gcf().savefig(RESULT_PATH + f'plots/{key}_beeswarm{SAVE_FORMAT}')
+            tmp=shap.Explanation(
+                shap_values[: , : , 1], data = test_X, feature_names = test_X.columns)
+        shap.plots.beeswarm(tmp, show = False, color_bar = True,
+                            plot_size = (12, 9), max_display = 10000)
+        plt.gcf().savefig(RESULT_PATH + f'plots/{key}_beeswarm{SAVE_FORMAT}', bbox_inches = 'tight')
         print('Plotting Beesarm Plot')
         plt.clf()
     except Exception as e:
@@ -364,10 +366,10 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
 
     try:
         ax = shap.force_plot(explainer.expected_value[0], shap_values[0][0, :], test_X.iloc[0],
-                             feature_names=test_X.columns, show=False, matplotlib=True,
+                             feature_names = test_X.columns, show = False, matplotlib = True,
                              )
         ax.savefig(RESULT_PATH +
-                   f'plots/{key}_force_plot{SAVE_FORMAT}', bbox_inches='tight')
+                   f'plots/{key}_force_plot{SAVE_FORMAT}', bbox_inches = 'tight')
         print('Plotting Force Plot')
         plt.clf()
     except Exception as e:

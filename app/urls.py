@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
+from . import settings
+from django.conf.urls.static import static
 from . import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
@@ -25,4 +28,4 @@ urlpatterns = [
     path('<str:data_name>/preprocess/', views.preprocess),
     path('<str:data_name>/process/', views.process),
     path('<str:data_name>/plots/', views.plots),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
