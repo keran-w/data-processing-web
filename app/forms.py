@@ -5,7 +5,7 @@ from . import settings
 from .core.variable_type_checking import var_type
 
 VAR_TYPES_LABEL, VAR_TYPES_CHOICES = settings.VAR_TYPES
-PRE_SELECT = 2
+PRE_SELECT = 3
 
 CHECKBOXS = [
     settings.IMPUTE_METHODS,
@@ -44,11 +44,13 @@ class ConfigForm(forms.Form):
             self.initial[f'var-{variable}'] = var_type(col)
 
         for label, choices in CHECKBOXS:
+            flag = label in ('Train Methods', 'Impute Methods')
             attrs = {}
             self.fields[label] = forms.MultipleChoiceField(
                 widget=forms.CheckboxSelectMultiple(attrs=attrs),
                 label=label,
                 choices=list(choices.items()),
-                required=True,
+                required=flag,
             )
-            self.initial[label] = list(choices.keys())[:PRE_SELECT]
+            self.initial[label] = list(choices.keys())[
+                :PRE_SELECT if flag else 2]

@@ -38,6 +38,33 @@
 
 <div class='row mb-5'></div>
 
+{% for sheet_name, data_col, data_value in sheet_data %}
+
+<h2 class="text-center">{{ sheet_name }}</h2><br>
+<div class="text-center container" style="width: 100%; ">
+    <table class="table table-striped table-fixed">
+        <thead>
+            <tr>
+                {% for k in data_col %}
+                <th> {{k}} </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for k in data_value %}
+            <tr>
+                {% for j in k %}
+                <td>{{j}}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class='row mb-5'></div>
+{% endfor %}
+<div class='row mb-5'></div>
+
 <div class="btn-group d-flex fixed-bottom" role="group">
     <a class="btn btn-light" href="/"> Restart</a>
     <a class="btn btn-light" href="/{{ data_name }}/plots">Continue</a>

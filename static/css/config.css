@@ -1,0 +1,19 @@
+div[id='div_id_Target Column'] {
+    display: none;
+}
+
+div[id='div_id_Impute Methods'] {
+    display: none;
+}
+
+div[id='div_id_Sampling Methods'] {
+    display: none;
+}
+
+div[id='div_id_Selection Methods'] {
+    display: none;
+}
+
+div[id='div_id_Train Methods'] {
+    display: none;
+}

@@ -123,16 +123,25 @@ def feature_selection(data, SEED, SELE_METHODS, sele_method_=None):
     variable_selected_dict = {}
 
     for sele_method in SELE_METHODS:
-        if sele_method_ is not None and sele_method not in sele_method_:
-            continue
-        print(f'Feature Selection Method: {sele_method}')
-        variable_selected_dict[sele_method] = feature_sele.feature_selection(
-            data, sele_method, SEED)
+        try:
+            if sele_method_ is not None and sele_method not in sele_method_:
+                continue
+            print(f'Feature Selection Method: {sele_method}')
+            variable_selected_dict[sele_method] = feature_sele.feature_selection(
+                data, sele_method, SEED)
+        except Exception as e:
+            print(f'Feature Selection Error: {e}')
 
     return variable_selected_dict
 
 
 def process_data(CFG, RESULT_PATH):
+    
+    print()    
+    print()    
+    print(CFG)
+    print()    
+    print()    
     data = CFG['data']
     tgt_col = CFG['tgt_col']
     imp_method_ = CFG['imp_method']
@@ -155,8 +164,11 @@ def process_data(CFG, RESULT_PATH):
     data = mult_disorder_to_dummies(data, var_type_dict, RESULT_PATH)
 
     # 数据填充6种
-    data_filling_dict = data_filling(
-        data, var_type_dict, RESULT_PATH, IMPUTE_METHODS, imp_method_)
+    if imp_method_[0] == '':
+        data_filling_dict = {'': data}
+    else:
+        data_filling_dict = data_filling(
+            data, var_type_dict, RESULT_PATH, IMPUTE_METHODS, imp_method_)
 
     all_keys = []
 
@@ -167,17 +179,24 @@ def process_data(CFG, RESULT_PATH):
         data_imp_train, data_imp_test = train_test_split(data_imp, SEED)
 
         # 数据采样6种
-        data_train_dict = data_sampling(
-            data_imp_train, SEED, RESULT_PATH, sampling_method_, 'Train Data')
-        data_test_dict = data_sampling(
-            data_imp_test, SEED, RESULT_PATH, sampling_method_, 'Test Data')
+        if sampling_method_[0] == '':
+            data_train_dict = {'': data_imp_train}
+            data_test_dict = {'': data_imp_test}
+        else:
+            data_train_dict = data_sampling(
+                data_imp_train, SEED, RESULT_PATH, sampling_method_, 'Train Data')
+            data_test_dict = data_sampling(
+                data_imp_test, SEED, RESULT_PATH, sampling_method_, 'Test Data')
 
         for sample_method in data_train_dict.keys():
             data_train, data_test = data_train_dict[sample_method], data_test_dict[sample_method]
 
             # 特征筛选 12种
-            variable_selected_dict = feature_selection(
-                data_train, SEED, sele_method_)
+            if sele_method_[0] == '':
+                variable_selected_dict = {'':list(data_train.columns[1:])}
+            else:    
+                variable_selected_dict = feature_selection(
+                    data_train, SEED, sele_method_)
 
             for sele_method in variable_selected_dict.keys():
                 vars_sele = [tgt_col] + variable_selected_dict[sele_method]

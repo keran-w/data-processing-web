@@ -15,7 +15,7 @@ from .settings import MEDIA_ROOT
 from .models import Config
 
 from .core.process import preprocess_runner, analysis_runner, model_runner
-from .core.analysis import analyze, get_plots, NpEncoder
+from .core.analysis import analyze, get_plots, NpEncoder, analyze_metrics_resuls
 
 
 NAN = -999.99999999
@@ -55,11 +55,11 @@ def index(request, data_name=None):
     if data_name is not None:
         file_path = os.path.join(MEDIA_ROOT, data_name)
         try:
-            data_df = pd.read_excel(file_path + '.xlsx', nrows=30)
+            data_df = pd.read_excel(file_path + '.xlsx')
             file_name = data_name + '.xlsx'
         except:
             try:
-                data_df = pd.read_csv(file_path + '.csv', nrows=30)
+                data_df = pd.read_csv(file_path + '.csv')
                 file_name = data_name + '.csv'
             except:
                 return render(request, 'index.html', context)
@@ -81,9 +81,9 @@ def config(request, data_name=None):
 
     file_path = os.path.join(MEDIA_ROOT, data_name)
     try:
-        data_df = pd.read_excel(file_path + '.xlsx', nrows=30)
+        data_df = pd.read_excel(file_path + '.xlsx')
     except:
-        data_df = pd.read_csv(file_path + '.csv', nrows=30)
+        data_df = pd.read_csv(file_path + '.csv')
 
     form_config = dict(
         variables=list(data_df.columns),
@@ -113,7 +113,9 @@ def config(request, data_name=None):
     else:
         form = ConfigForm(**form_config)
 
-    return render(request, 'config.html', {'form': form, 'data_name': data_name})
+    return render(request, 'config.html', {'form': form, 'data_name': data_name, 'hide_vars':[
+        'Impute Methods', 'Sampling Methods', 'Selection Methods', 'Train Methods'
+    ]})
 
 
 def preprocess(request, data_name=None):
@@ -147,7 +149,7 @@ def process(request, data_name=None):
     RESULT_PATH = f'results/{data_name}/'
     results_path = RESULT_PATH + 'analysis/results_metrics.csv'
     try:
-        results = pd.read_csv(results_path).round(2)
+        results = pd.read_csv(results_path).round(4).fillna('')
     except:
         CFG['RESULT_PATH'] = RESULT_PATH
         metrics_dict = model_runner(CFG)
@@ -155,12 +157,25 @@ def process(request, data_name=None):
         json.dump(metrics_dict, open(
             RESULT_PATH + f'analysis/metrics_dict.json', 'w', encoding='utf-8'), indent=4, cls=NpEncoder)
         results_path = analyze(metrics_dict, RESULT_PATH)
-        results = pd.read_csv(results_path).round(2)
+        results = pd.read_csv(results_path).round(4)
+        
+    result_path = analyze_metrics_resuls(data_name, RESULT_PATH)
+    datum = pd.ExcelFile(result_path)
+    sheet_names = datum.sheet_names
+    data_cols = []
+    data_values = []
+    for sn in sheet_names:
+        data = pd.read_excel(datum, sn).fillna('')
+        data_cols.append(
+            [col if col[:7] != 'Unnamed' else '' for col in data.columns])
+        data_values.append(data.values.tolist())
 
     return render(request, 'process.html', {
         'data_name': data_name,
         'file_cols': list(results.columns),
-        'file_data': results.values.tolist()
+        'file_data': results.values.tolist(),
+        'sheet_ids': list(range(len(sheet_names))),
+        'sheet_data': list(zip(sheet_names, data_cols, data_values)),
     })
 
 
@@ -182,7 +197,7 @@ def plots(request, data_name=None):
     img_paths = [f'/media/{data_name}_{file}' for file in files]
     return render(request, 'plots.html', {
         'data_name': data_name,
-        'img_paths': img_paths
+        'img_paths': img_paths,
     })
     
 

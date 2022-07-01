@@ -63,6 +63,13 @@ def preprocess_runner(CFG):
     return CFG, RESULT_PATH, process_data(CFG, RESULT_PATH)
 
 
+def univariate_analysis():
+    ...
+    
+def multi_factor_analysis():
+    ...
+
+
 def analysis_runner(CFG, var_type_dict, RESULT_PATH):
 
     import pandas as pd
@@ -167,9 +174,6 @@ def analysis_runner(CFG, var_type_dict, RESULT_PATH):
         #             writer, encoding='utf-8', sheet_name=f'sheet{i+1}')
         return [pd.read_html(res.as_html(), header=0, index_col=0)[0] for res in model.summary().tables]
 
-    # 判断定性还是定量
-    # print('判断定性还是定量', yvar_type)
-
     with pd.ExcelWriter(RESULT_PATH + 'analysis/results.xlsx') as writer:
         if correlation_analysis_results is not None:
             correlation_analysis_results.to_excel(
@@ -177,12 +181,21 @@ def analysis_runner(CFG, var_type_dict, RESULT_PATH):
         if stat_data is not None:
             stat_data.to_excel(writer, encoding='utf-8',
                                index=False, sheet_name='stat_F1')
-        if stat_data_binary is not None:
-            stat_data_binary.to_excel(
-                writer, encoding='utf-8', index=False, sheet_name='binary_stat_F1')
-        if two_binary_results is not None:
-            two_binary_results.to_excel(
-                writer, encoding='utf-8', index=False, sheet_name='two_binary_results')
+            
+        import numpy as np
+        if stat_data_binary is not None and two_binary_results is not None:
+            df_res = stat_data_binary.iloc[::3].drop('Mean±SD', 1)
+            df_res.insert(2, value=stat_data_binary.query('group == 0')['Mean±SD'], column='Y_0')
+            df_res.insert(3, value=stat_data_binary.query('group == 1')['Mean±SD'], column='Y_1')
+            df_res = pd.DataFrame(np.r_[df_res.values, two_binary_results.values[1:]], columns =df_res.columns).fillna('')
+            df_res.to_excel(writer, encoding='utf-8', index=False, sheet_name='单因素分析')
+        
+        # if stat_data_binary is not None:
+        #     stat_data_binary.to_excel(
+        #         writer, encoding='utf-8', index=False, sheet_name='binary_stat_F1')
+        # if two_binary_results is not None:
+        #     two_binary_results.to_excel(
+        #         writer, encoding='utf-8', index=False, sheet_name='two_binary_results')
 
         dfs = []
         if yvar_type == 'binary':
@@ -193,10 +206,15 @@ def analysis_runner(CFG, var_type_dict, RESULT_PATH):
 
         for i, df in enumerate(dfs):
             sheet_name = f'sheet{i + 1}'
-            if i == 1 and yvar_type == 'binary':
+            if i == 0 and yvar_type == 'binary':
                 sheet_name = 'logistic回归'
-            if i == 1 and yvar_type == 'quan':
+            if i == 0 and yvar_type == 'quan':
                 sheet_name = '多重线性回归'
+            
+            if i == 1 and yvar_type == 'binary':
+                sheet_name = 'logistic回归结果'
+            if i == 1 and yvar_type == 'quan':
+                sheet_name = '多重线性回归结果'
 
             df.to_excel(writer, encoding='utf-8',
                         index=True, sheet_name=sheet_name)

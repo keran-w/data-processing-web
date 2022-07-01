@@ -8,6 +8,7 @@ from . import fill_optimalDel
 
 def data_impute(df, impute_method, var_type_dict):  # 数据填充
     df_impute = np.array(df)
+    print(impute_method)
 
     if impute_method == 'Simple':
         df_imp = fill_simpleImputing.simple_imputing(df, var_type_dict)
@@ -24,5 +25,8 @@ def data_impute(df, impute_method, var_type_dict):  # 数据填充
         df_imp = fill_Randomforest.random_forest(df, var_type_dict)
     elif impute_method == 'optimal':
         df_imp = fill_optimalDel.find_opt_del_mode(df)
+    elif df_imp == None:
+        return df
 
     return df_imp
+ 

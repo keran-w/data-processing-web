@@ -6,7 +6,7 @@ def var_type(vars):
     if num_unique > 10:
         return 'quan'
     elif 2 < num_unique <= 10:
-        return 'mult_order'
+        return 'mult_disorder'
     elif num_unique == 2:
         return 'binary'
 

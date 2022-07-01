@@ -1,7 +1,10 @@
 import os
+from django.conf import settings
 import numpy as np
 import pandas as pd
 from sklearn import metrics
+
+from rpy2 import robjects
 import traceback
 from collections import Counter
 from matplotlib import pyplot as plt
@@ -18,8 +21,6 @@ from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
 from sklearn.neural_network import MLPClassifier
-
-from ..settings import MEDIA_ROOT
 
 SAVE_FORMAT = '.png'
 
@@ -187,7 +188,7 @@ def analyze(metrics_dict, RESULT_PATH):
     metrics_df = pd.DataFrame(metrics_lst, columns=[
         'accuracy', 'precision', 'recall', 'f1_score', 'brier'])
     results_metrics_df = pd.concat((results_auc_df, metrics_df), axis=1)
-    results_metrics_df = results_metrics_df.sort_values('AUC', ascending=False)
+    results_metrics_df = results_metrics_df.sort_values('AUC', ascending=False).fillna('')
     results_metrics_df.to_csv(
         RESULT_PATH + f'analysis/results_metrics.csv', index=None)
     return RESULT_PATH + f'analysis/results_metrics.csv'
@@ -222,45 +223,47 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
                  label=f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw=3, alpha=0.8)
     plt.legend()
     plt.title('ROC Curves')
-    plt.savefig(RESULT_PATH + f'plots/roc_curves{SAVE_FORMAT}', bbox_inches='tight')
+    plt.savefig(
+        RESULT_PATH + f'plots/roc_curves{SAVE_FORMAT}', bbox_inches='tight')
     plt.clf()
 
     # plot pr curves
-    plt.figure(figsize = (16, 16))
-    colors=['darkorange', 'navy', 'aqua', 'red']
-    linestyles=['--', '-', ':', '--']
+    plt.figure(figsize=(16, 16))
+    colors = ['darkorange', 'navy', 'aqua', 'red']
+    linestyles = ['--', '-', ':', '--']
 
     for i, plot_model_name in enumerate(plot_model_names):
-        method_params=results_metrics_df.query(
+        method_params = results_metrics_df.query(
             '`Model Name` == @plot_model_name').head(1).values.squeeze()
-        best_key, best_mn='_'.join(method_params[:3]), method_params[3]
+        best_key, best_mn = '_'.join(method_params[:3]), method_params[3]
 
-        auc, y_true, y_pred, y_score, params=metrics_dict[best_key][best_mn]
+        auc, y_true, y_pred, y_score, params = metrics_dict[best_key][best_mn]
         # # plot PR curve
-        r_p=np.c_[metrics.precision_recall_curve(y_true, y_score)[:2]].T
-        plt.plot(r_p[0], r_p[1], linestyles[i], color = colors[i],
-                 label = f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw = 3, alpha = 0.8)
+        r_p = np.c_[metrics.precision_recall_curve(y_true, y_score)[:2]].T
+        plt.plot(r_p[0], r_p[1], linestyles[i], color=colors[i],
+                 label=f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw=3, alpha=0.8)
 
     plt.legend()
     plt.title('PR Curves')
-    plt.savefig(RESULT_PATH + f'plots/pr_curves{SAVE_FORMAT}', bbox_inches = 'tight')
+    plt.savefig(
+        RESULT_PATH + f'plots/pr_curves{SAVE_FORMAT}', bbox_inches='tight')
     plt.clf()
 
     # plot calibration curve
     plt.figure(figsize=(16, 16))
-    colors=['darkorange', 'navy', 'aqua', 'red']
-    linestyles=['--', '-', ':', '--']
+    colors = ['darkorange', 'navy', 'aqua', 'red']
+    linestyles = ['--', '-', ':', '--']
 
     for i, plot_model_name in enumerate(plot_model_names):
-        method_params=results_metrics_df.query(
+        method_params = results_metrics_df.query(
             '`Model Name` == @plot_model_name').head(1).values.squeeze()
         # print(method_params)
-        best_key, best_mn='_'.join(method_params[:3]), method_params[3]
+        best_key, best_mn = '_'.join(method_params[:3]), method_params[3]
 
-        auc, y_true, y_pred, y_score, params=metrics_dict[best_key][best_mn]
+        auc, y_true, y_pred, y_score, params = metrics_dict[best_key][best_mn]
 
         # plot roc curve
-        fpr_tpr=np.c_[metrics.roc_curve(y_true, y_score)[:2]].T
+        fpr_tpr = np.c_[metrics.roc_curve(y_true, y_score)[:2]].T
         plt.plot(fpr_tpr[0], fpr_tpr[1], linestyles[i], color=colors[i],
                  label=f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw=3, alpha=0.8)
     plt.legend()
@@ -275,39 +278,27 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
     # except:
     #     data = pd.read_csv(file_path + '.csv', nrows=30)
 
-    tgt_col=CFG['tgt_col']
+    tgt_col = CFG['tgt_col']
 
-    fi, sa, se, mn=best_model_info.values.squeeze()[:4]
-    key=f'{fi}_{sa}_{se}'
-    train_data=pd.read_csv(f'{RESULT_PATH}data/{key}_train.csv')
-    test_data=pd.read_csv(f'{RESULT_PATH}data/{key}_test.csv')
+    fi, sa, se, mn = best_model_info.values.squeeze()[:4]
+    key = f'{fi}_{sa}_{se}'
+    train_data = pd.read_csv(f'{RESULT_PATH}data/{key}_train.csv')
+    test_data = pd.read_csv(f'{RESULT_PATH}data/{key}_test.csv')
 
-    var_type_dict=json.load(
+    var_type_dict = json.load(
         open(RESULT_PATH + f'logging/var_type_dict.json', 'r'))
-    columns=[k for key in var_type_dict if key in ['mult_order',
+    columns = [k for key in var_type_dict if key in ['mult_order',
                                                      'binary', 'quan', 'mult_disorder'] for k in var_type_dict[key]]
     print(train_data.columns)
-    # data = data_filling(data, var_type_dict, fi)[fi]
-    # data_train, data_test = train_test_split(data, SEED)
-
-    # data_train = data_sampling(data_train, SEED, sa, 'Train Data')[sa]
-    # data_test = data_sampling(data_test, SEED, sa, 'Test Data')[sa]
-
-    # variable_selected = feature_selection(data_train, SEED, se)[se]
-
-    # data_train = data_train[[tgt_col] + variable_selected]
-    # data_test = data_test[[tgt_col] + variable_selected]
-
-    # args = model_pro.get_dataset(data_train, data_test)
-    # X_train, test_X, y_train, test_y = args
-
-    # args = model_pro.get_dataset(data_train, data_test)
-    # X_train, test_X, y_train, y_train = args
 
     train_X = train_data.copy()
     train_y = train_X.pop(tgt_col)
     test_X = test_data.copy()
     test_y = test_X.pop(tgt_col)
+
+    data_name = CFG['data_name']
+
+    os.system(f'python app/core/dca_curve.py {data_name}')
 
     SEED = CFG['seed']
     import yaml
@@ -336,13 +327,14 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
         try:
             explainer = shap.Explainer(model, masker)
         except Exception as e:
-            print('Cannot Plot SHAP', e)
+            print('Cannot Plot SHAP.', e)
             return RESULT_PATH + f'plots'
     shap_values = explainer(test_X)
 
     try:
         shap.summary_plot(shap_values, test_X, plot_type='bar', show=False)
-        plt.gcf().savefig(RESULT_PATH + f'plots/{key}_summary_plot{SAVE_FORMAT}', bbox_inches='tight')
+        plt.gcf().savefig(RESULT_PATH +
+                          f'plots/{key}_summary_plot{SAVE_FORMAT}', bbox_inches='tight')
         print('Plotting Summary Plot')
         plt.clf()
     except Exception as e:
@@ -351,14 +343,15 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
     try:
         try:
             shap_values.values
-            tmp=shap.Explanation(shap_values, data = test_X,
-                                   feature_names = test_X.columns)
+            tmp = shap.Explanation(shap_values, data=test_X,
+                                   feature_names=test_X.columns)
         except:
-            tmp=shap.Explanation(
-                shap_values[: , : , 1], data = test_X, feature_names = test_X.columns)
-        shap.plots.beeswarm(tmp, show = False, color_bar = True,
-                            plot_size = (12, 9), max_display = 10000)
-        plt.gcf().savefig(RESULT_PATH + f'plots/{key}_beeswarm{SAVE_FORMAT}', bbox_inches = 'tight')
+            tmp = shap.Explanation(
+                shap_values[:, :, 1], data=test_X, feature_names=test_X.columns)
+        shap.plots.beeswarm(tmp, show=False, color_bar=True,
+                            plot_size=(12, 9), max_display=10000)
+        plt.gcf().savefig(RESULT_PATH +
+                          f'plots/{key}_beeswarm{SAVE_FORMAT}', bbox_inches='tight')
         print('Plotting Beesarm Plot')
         plt.clf()
     except Exception as e:
@@ -366,12 +359,44 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
 
     try:
         ax = shap.force_plot(explainer.expected_value[0], shap_values[0][0, :], test_X.iloc[0],
-                             feature_names = test_X.columns, show = False, matplotlib = True,
+                             feature_names=test_X.columns, show=False, matplotlib=True,
                              )
         ax.savefig(RESULT_PATH +
-                   f'plots/{key}_force_plot{SAVE_FORMAT}', bbox_inches = 'tight')
+                   f'plots/{key}_force_plot{SAVE_FORMAT}', bbox_inches='tight')
         print('Plotting Force Plot')
         plt.clf()
     except Exception as e:
         print(f'Force Plot Error: {e}')
+
     return RESULT_PATH + f'plots'
+
+
+def analyze_metrics_resuls(data_name, RESULT_PATH):
+    import pandas as pd
+    import numpy as np
+    import statsmodels.formula.api as sm
+    from .utils.univariate_analysis.univariate_quantitative import univariate_quantitative_methods1
+
+    import warnings
+    warnings.filterwarnings('ignore')
+    columns_name = ['variable', 'group', 'Mean±SD',
+                    'statistics', 'P values', 'method']
+
+    df = pd.read_csv(f'results/{data_name}/analysis/results_metrics.csv')
+
+    independent_vars = [var for var in [
+        'Filling Method', 'Sampling Method', 'Feature Selection Method', 'Model Name']
+        if df[var].nunique() > 1]
+    dependent_vars = ['AUC', 'accuracy', 'precision', 'recall', 'f1_score']
+
+    with pd.ExcelWriter(RESULT_PATH + 'analysis/results_metrics_analysis.xlsx') as writer:
+        for dependent_var in dependent_vars:
+            prco_data = df[[dependent_var] + independent_vars]
+            univariate_quantitative_methods1(prco_data)[dependent_var].fillna('').to_excel(
+                writer, encoding='utf-8', index=False, sheet_name=f'{dependent_var}-单因素分析')
+            
+            prco_data.columns = [col.replace(' ', '_') for col in prco_data.columns]
+            model = sm.ols(f"{prco_data.columns[0]}~{'+'.join(prco_data.columns[1:])}", data=prco_data).fit()
+            for i, table in enumerate([pd.read_html(res.as_html(), header=0, index_col=0)[0] for res in model.summary().tables]):
+                table.to_excel(writer, encoding='utf-8', index=True, sheet_name=f'{dependent_var}-多因素分析-{i+1}')
+    return RESULT_PATH + 'analysis/results_metrics_analysis.xlsx'

@@ -134,49 +134,47 @@ STATICFILES_DIRS = (
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-
 # radio selections for variable types
 VAR_TYPES = 'Variable Types', {
     'delete': '删除',
     'binary': '二值变量',
-    'quan': '多值有序',
-    'mult_order': '多值无序',
-    'mult_disorder': '连续变量',
+    'mult_order': '多值有序',
+    'mult_disorder': '多值无序',
+    'quan': '连续变量',
 }
 
 # checkbox selections for methods
 SAMPLING_METHODS = 'Sampling Methods', {
-    'SMO': 'SMO',
-    'SSMO': 'SSMO',
-    'BSMO': 'BSMO',
-    'ADA': 'ADA',
-    'ROS': 'ROS',
-    'SMN': 'SMN',
+    'SMO': 'SMOTE',
+    'SSMO': 'SVMSMOTE',
+    'BSMO': 'BorderlineSMOTE',
+    'ADA': 'ADASYN',
+    'ROS': 'RandomOverSampler',
+    'SMN': 'SMOTEN',
 }
 
 IMPUTE_METHODS = 'Impute Methods', {
-    'Simple': 'Simple',
+    'Simple': 'Simple Imputing',
     'KNN': 'KNN',
-    'ISVD': 'ISVD',
-    'Imput': 'Imput',
-    'rf': 'rf',
-    'optimal': 'optimal',
+    'ISVD': 'Iterative SVD',
+    'Imput': 'Iterative Imputer',
+    'rf': 'Random Forest',
+    'optimal': 'Optimal Imputing',
 }
 
 SELE_METHODS = 'Selection Methods', {
-    'Las': 'Las',
-    'RCV': 'RCV',
-    'ENC': 'ENC',
-    'Cat': 'Cat',
+    'Las': 'LassoCV',
+    'RCV': 'RidgeCV',
+    'ENC': 'ElasticNetCV',
+    'Cat': 'CatBoostClassifier',
     'SVC': 'SVC',
-    'RF': 'RF',
-    'Ada': 'Ada',
-    'GBC': 'GBC',
-    'ExT': 'ExT',
-    'BNB': 'BNB',
-    'XGB': 'XGB',
-    'LGBM': 'LGBM',
+    'RF': 'RandomForestClassifier',
+    'Ada': 'AdaBoostClassifier',
+    'GBC': 'GradientBoostingClassifier',
+    'ExT': 'ExtraTreesClassifier',
+    'BNB': 'BernoulliNB',
+    'XGB': 'XGBClassifier',
+    'LGBM': 'LGBMClassifier',
 }
 
 TRAIN_METHODS = 'Train Methods', {
@@ -186,19 +184,19 @@ TRAIN_METHODS = 'Train Methods', {
     'Multinomial Naive Bayes': 'Multinomial Naive Bayes',
     'Bernoulli Naive Bayes': 'Bernoulli Naive Bayes',
     'XGBoost': 'XGBoost',
-    'LGBoost': 'LGBoost',
+    'LGBoost': 'LightGBM',
     'Gaussian Naive Bayes': 'Gaussian Naive Bayes',
     'Complement Naive Bayes': 'Complement Naive Bayes',
     'KNN': 'KNN',
     'CatBoost': 'CatBoost',
     'Decision Tree': 'Decision Tree',
-    'QDA': 'QDA',
+    'QDA': 'Quadratic Discriminant Analysis',
     'Extra Tree': 'Extra Tree',
-    'SVC': 'SVC',
+    'SVC': 'Support Vector Classification',
     'Passive Aggressive': 'Passive Aggressive',
-    'LDA': 'LDA',
+    'LDA': 'Linear Discriminant Analysis',
     'Logistic Regression': 'Logistic Regression',
-    'SGD': 'SGD',
+    'SGD': 'Stochastic Gradient Descent',
     'Bagging': 'Bagging',
-    'MLP': 'MLP',
+    'MLP': 'Multilayer Perceptron',
 }
