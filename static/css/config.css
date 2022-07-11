@@ -1,19 +1,7 @@
-div[id='div_id_Target Column'] {
+.formpage2 {
     display: none;
 }
 
-div[id='div_id_Impute Methods'] {
-    display: none;
-}
-
-div[id='div_id_Sampling Methods'] {
-    display: none;
-}
-
-div[id='div_id_Selection Methods'] {
-    display: none;
-}
-
-div[id='div_id_Train Methods'] {
+.formpage3 {
     display: none;
 }

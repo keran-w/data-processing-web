@@ -14,6 +14,10 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+
+    {% load static %}
+    <script src="{% static 'js/jQuery.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     {% block head %}
     {% endblock head %}
     {% load crispy_forms_tags %}
@@ -54,9 +58,7 @@
         {% endblock footer %}
     </footer>
     <!-- <script src="" async defer></script> -->
-    {% load static %}
-    <script src="{% static 'js/jQuery.js' %}"></script>
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
 </body>
 
 </html>

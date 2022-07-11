@@ -20,6 +20,7 @@ class ConfigForm(forms.Form):
     def __init__(self, *args, **kwargs):
         variables = kwargs.pop('variables')
         data_df = kwargs.pop('data_df')
+        flag_empty = kwargs.pop('flag_empty')
         super(ConfigForm, self).__init__(*args, **kwargs)
         self.fields['Target Column'] = forms.CharField(
             widget=forms.TextInput(attrs={
@@ -35,7 +36,7 @@ class ConfigForm(forms.Form):
             print(variable, col)
             self.fields[f'var-{variable}'] = forms.ChoiceField(
                 widget=forms.RadioSelect(attrs={
-                    'required': 'true'
+                    'required': 'true',
                 }),
                 label=f'{variable} {col[:3]}',
                 choices=list(VAR_TYPES_CHOICES.items()),
@@ -44,13 +45,18 @@ class ConfigForm(forms.Form):
             self.initial[f'var-{variable}'] = var_type(col)
 
         for label, choices in CHECKBOXS:
+            print(flag_empty)
+            if not flag_empty and label == 'Impute Methods':
+                continue
             flag = label in ('Train Methods', 'Impute Methods')
-            attrs = {}
             self.fields[label] = forms.MultipleChoiceField(
-                widget=forms.CheckboxSelectMultiple(attrs=attrs),
+                widget=forms.CheckboxSelectMultiple(),
                 label=label,
                 choices=list(choices.items()),
                 required=flag,
             )
             self.initial[label] = list(choices.keys())[
                 :PRE_SELECT if flag else 2]
+            
+        # for visible in self.visible_fields():
+        #     visible.field.widget.attrs['class'] = 'formpage3'

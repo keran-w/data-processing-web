@@ -18,6 +18,32 @@ from .core.process import preprocess_runner, analysis_runner, model_runner
 from .core.analysis import analyze, get_plots, NpEncoder, analyze_metrics_resuls
 
 
+'''
+
+div[id='div_id_Target Column'] {
+    display: none;
+}
+
+div[id='div_id_Impute Methods'] {
+    display: none;
+}
+
+div[id='div_id_Sampling Methods'] {
+    display: none;
+}
+
+div[id='div_id_Selection Methods'] {
+    display: none;
+}
+
+div[id='div_id_Train Methods'] {
+    display: none;
+}
+
+'''
+
+
+
 NAN = -999.99999999
 
 
@@ -85,9 +111,12 @@ def config(request, data_name=None):
     except:
         data_df = pd.read_csv(file_path + '.csv')
 
+    flag_empty = data_df.isnull().values.any()
+    
     form_config = dict(
         variables=list(data_df.columns),
-        data_df=data_df
+        data_df=data_df,
+        flag_empty=flag_empty
     )
 
     if request.method == 'POST':
@@ -113,9 +142,7 @@ def config(request, data_name=None):
     else:
         form = ConfigForm(**form_config)
 
-    return render(request, 'config.html', {'form': form, 'data_name': data_name, 'hide_vars':[
-        'Impute Methods', 'Sampling Methods', 'Selection Methods', 'Train Methods'
-    ]})
+    return render(request, 'config.html', {'form': form, 'data_name': data_name})
 
 
 def preprocess(request, data_name=None):

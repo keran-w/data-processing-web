@@ -4,22 +4,38 @@
 {% block head %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/config.css' %}" />
+<script src="{% static 'js/config.js' %}"></script>
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+<script>
+
+</script>
+
 
 {% endblock head %}
 {% block pagetitle %}
-    Config
+Config
 {% endblock pagetitle %}
 {% block main %}
-    <form method="post" class="config-form">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <div class="py-5"></div>
+<form method="post" class="config-form">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <div class="py-5"></div>
 
-        <div class="btn-group d-flex fixed-bottom" role=" group">
-            <a class="btn btn-light" href="/"> Restart</a>
-            <button class="btn btn-light" type="submit">Continue</button>
-          </div>
-    </form>
+    <div class="btn-group d-flex fixed-bottom" role=" group">
+        <a class="btn btn-light formpage1" href="/"> Restart</a>
+        <button class="btn btn-light formpage1" id="btnpage1n" type="button">Next</button>
+
+        <button class="btn btn-light formpage2" id="btnpage2b" type="button">Back</button>
+        <button class="btn btn-light formpage2" id="btnpage2n" type="button">Next</button>
+
+        <button class="btn btn-light formpage3" id="btnpage3b" type="button"> Back</button>
+        <button class="btn btn-light formpage3" type="submit">Continue</button>
+    </div>
+</form>
+
+<div class="py-5"></div>
+
 {% endblock main %}
 {% block footer %}
 {% endblock footer %}
