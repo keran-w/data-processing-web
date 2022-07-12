@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from . import settings
 from django.conf.urls.static import static
 from . import views
@@ -28,4 +28,5 @@ urlpatterns = [
     path('<str:data_name>/preprocess/', views.preprocess),
     path('<str:data_name>/process/', views.process),
     path('<str:data_name>/plots/', views.plots),
+    re_path(r'^celery-progress/', include('celery_progress.urls')),  # the endpoint is configurable
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

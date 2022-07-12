@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.db.backends.sqlite3',
     'crispy_forms',
     'crispy_bootstrap5',
+    'celery_progress',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
