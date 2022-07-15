@@ -210,8 +210,10 @@ def plots(request, data_name=None):
         open(RESULT_PATH + f'analysis/metrics_dict.json', 'r'))
     plot_path = get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH)
     # img_paths = [f'.{plot_path}/{file}' for file in os.listdir(plot_path)]
-    files = os.listdir(plot_path)
+    files = [file for file in os.listdir(plot_path) if file.split('.')[-1] == 'png']
+    
     img_paths = [f'{plot_path}/{file}' for file in files]
+    print(img_paths)
 
     for img_path, file in zip(img_paths, files):
         shutil.copy(img_path, os.path.join(MEDIA_ROOT, f'{data_name}_{file}'))
@@ -221,7 +223,3 @@ def plots(request, data_name=None):
         'data_name': data_name,
         'img_paths': img_paths,
     })
-
-
-# results/定性资料-糖化蛋白/plots/roc_curves.png
-# /results/定性资料-糖化蛋白/plots/pr_curves.png

@@ -22,7 +22,7 @@ from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
 from sklearn.neural_network import MLPClassifier
 
-SAVE_FORMAT = '.png'
+SAVE_FORMAT = ['.png', '.pdf']
 
 
 class NpEncoder(json.JSONEncoder):
@@ -188,7 +188,8 @@ def analyze(metrics_dict, RESULT_PATH):
     metrics_df = pd.DataFrame(metrics_lst, columns=[
         'accuracy', 'precision', 'recall', 'f1_score', 'brier'])
     results_metrics_df = pd.concat((results_auc_df, metrics_df), axis=1)
-    results_metrics_df = results_metrics_df.sort_values('AUC', ascending=False).fillna('')
+    results_metrics_df = results_metrics_df.sort_values(
+        'AUC', ascending=False).fillna('')
     results_metrics_df.to_csv(
         RESULT_PATH + f'analysis/results_metrics.csv', index=None)
     return RESULT_PATH + f'analysis/results_metrics.csv'
@@ -223,8 +224,9 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
                  label=f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw=3, alpha=0.8)
     plt.legend()
     plt.title('ROC Curves')
-    plt.savefig(
-        RESULT_PATH + f'plots/roc_curves{SAVE_FORMAT}', bbox_inches='tight')
+    for fmt in SAVE_FORMAT:
+        plt.savefig(
+            RESULT_PATH + f'plots/roc_curves{fmt}', bbox_inches='tight')
     plt.clf()
 
     # plot pr curves
@@ -245,8 +247,9 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
 
     plt.legend()
     plt.title('PR Curves')
-    plt.savefig(
-        RESULT_PATH + f'plots/pr_curves{SAVE_FORMAT}', bbox_inches='tight')
+    for fmt in SAVE_FORMAT:
+        plt.savefig(
+            RESULT_PATH + f'plots/pr_curves{fmt}', bbox_inches='tight')
     plt.clf()
 
     # plot calibration curve
@@ -268,8 +271,9 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
                  label=f'{" ".join(method_params[:4])} AUC=({auc:.2f})', lw=3, alpha=0.8)
     plt.legend()
     plt.title('Calibration Curves')
-    plt.savefig(
-        RESULT_PATH + f'plots/calibration_curve{SAVE_FORMAT}', bbox_inches='tight')
+    for fmt in SAVE_FORMAT:
+        plt.savefig(
+            RESULT_PATH + f'plots/calibration_curve{fmt}', bbox_inches='tight')
     plt.clf()
 
     # file_path = os.path.join(MEDIA_ROOT, CFG['data_name'])
@@ -333,8 +337,9 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
 
     try:
         shap.summary_plot(shap_values, test_X, plot_type='bar', show=False)
-        plt.gcf().savefig(RESULT_PATH +
-                          f'plots/{key}_summary_plot{SAVE_FORMAT}', bbox_inches='tight')
+        for fmt in SAVE_FORMAT:
+            plt.gcf().savefig(RESULT_PATH +
+                              f'plots/{key}_summary_plot{fmt}', bbox_inches='tight')
         print('Plotting Summary Plot')
         plt.clf()
     except Exception as e:
@@ -350,8 +355,9 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
                 shap_values[:, :, 1], data=test_X, feature_names=test_X.columns)
         shap.plots.beeswarm(tmp, show=False, color_bar=True,
                             plot_size=(12, 9), max_display=10000)
-        plt.gcf().savefig(RESULT_PATH +
-                          f'plots/{key}_beeswarm{SAVE_FORMAT}', bbox_inches='tight')
+        for fmt in SAVE_FORMAT:
+            plt.gcf().savefig(RESULT_PATH +
+                              f'plots/{key}_beeswarm{fmt}', bbox_inches='tight')
         print('Plotting Beesarm Plot')
         plt.clf()
     except Exception as e:
@@ -361,8 +367,9 @@ def get_plots(CFG, results_metrics_df, metrics_dict, RESULT_PATH):
         ax = shap.force_plot(explainer.expected_value[0], shap_values[0][0, :], test_X.iloc[0],
                              feature_names=test_X.columns, show=False, matplotlib=True,
                              )
-        ax.savefig(RESULT_PATH +
-                   f'plots/{key}_force_plot{SAVE_FORMAT}', bbox_inches='tight')
+        for fmt in SAVE_FORMAT:
+            ax.savefig(RESULT_PATH +
+                       f'plots/{key}_force_plot{fmt}', bbox_inches='tight')
         print('Plotting Force Plot')
         plt.clf()
     except Exception as e:
@@ -394,9 +401,12 @@ def analyze_metrics_resuls(data_name, RESULT_PATH):
             prco_data = df[[dependent_var] + independent_vars]
             univariate_quantitative_methods1(prco_data)[dependent_var].fillna('').to_excel(
                 writer, encoding='utf-8', index=False, sheet_name=f'{dependent_var}-单因素分析')
-            
-            prco_data.columns = [col.replace(' ', '_') for col in prco_data.columns]
-            model = sm.ols(f"{prco_data.columns[0]}~{'+'.join(prco_data.columns[1:])}", data=prco_data).fit()
+
+            prco_data.columns = [col.replace(' ', '_')
+                                 for col in prco_data.columns]
+            model = sm.ols(
+                f"{prco_data.columns[0]}~{'+'.join(prco_data.columns[1:])}", data=prco_data).fit()
             for i, table in enumerate([pd.read_html(res.as_html(), header=0, index_col=0)[0] for res in model.summary().tables]):
-                table.to_excel(writer, encoding='utf-8', index=True, sheet_name=f'{dependent_var}-多因素分析-{i+1}')
+                table.to_excel(writer, encoding='utf-8', index=True,
+                               sheet_name=f'{dependent_var}-多因素分析-{i+1}')
     return RESULT_PATH + 'analysis/results_metrics_analysis.xlsx'
