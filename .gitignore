@@ -52,4 +52,4 @@ test.html
 media
 *.sqlite3
 TODO.txt
-
+!R-4.2.0-win.exe
